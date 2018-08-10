@@ -6,5 +6,5 @@ render(
   <div>
     {hello}
   </div>,
-  document.querySelector('body')
+  document.querySelector('.container')
 )
