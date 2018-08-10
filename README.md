@@ -102,10 +102,21 @@ $ npm install babel-cli@6.18.0 --save-dev
 $ sudo npm install -g babel-cli
 ```
 ### Create a `.babelrc` file
+This tells Bable what to transpile using which presets (latest JS and react)
+
+_(Webpack 1)_
 
 ```json
 {
   "presets": ["latest", "react", "stage-0"]
+}
+```
+
+_Webpack 3_
+
+```json
+{
+  "presets": ["env", "react"]
 }
 ```
 
@@ -124,16 +135,18 @@ $ npm install babel-preset-stage-0@6.16.0 --save-dev
 $ babel ./src/index.js --out-file ./dist/bundle.js
 ```
 
-## Webpack
+## Webpack 1 and 3
 _Bye-bye, Gulp and Grunt. Hello, Webpack!_
 
 1. Add a `webpack.config.js` file
+
+_(Webpack 1)_
 
 ```javascript
 var webpack = require("webpack"); //best practice to require...ES6 import
 
 module.exports = {
-  entry: ".src/index.js",
+  entry: "./src/index.js",
   output: {
     path: "dist/assets",
     filename: "bundle.js",
@@ -145,14 +158,143 @@ module.exports = {
     port: 3000
   },
   module: {
-    loaders: {
+    loaders: [
       test: /\.js$/,  // look for files that has a .js extension
       exclude: /(node_modules)/,
-      loader: ['babel-loader'],
+      loader: ["babel-loader"],
       query: {
         presets: ["latest", "react", "stage-0"]
+      }
+    ]
+  }
+}
+```
+_(Webpack 3)_
+
+```javascript
+var webpack = require("webpack");
+
+module.exports = {
+  entry: "./src/index.js",
+  output: {
+    filename: "bundle.js",
+  },
+  module: {
+    rules: {
+      test: /\.js$/,
+      exclude: /(node_modules)/,
+      loader: 'babel-loader',
+      query: {
+        presets: ["env", "react"]
       }
     }
   }
 }
+```
+
+2. Install Webpack _(Webpack 1)_
+
+```
+npm install webpack@1.13.3 --save-dev
+npm install babel-loader@6.2.5 --save-dev
+npm install webpack-dev-server@1.16.2 --save-dev
+```
+
+Now if you try and run `webpack` in the CL it does not work. You'll need to install it globally.
+
+`sudo npm install -g webpack@1.13.3`
+
+OR instead of global install just get more specific
+
+`./node_modules/.bin/webpack`
+
+Once installed *add the webpack dev server* to the `package.json` file along with `"build"` command
+
+```
+  "scripts": {
+    "start": "./node_modules/.bin/webpack-dev-server",
+    "build": "./node_modules/.bin/webpack"
+```
+
+3. Install React
+
+```
+npm install react@15.3.2 --save
+npm install react-dom@15.3.2 --save
+
+```
+
+## Handling JSON
+
+See `titles.json` that we will squeeze in to `lib.js`
+
+```javascript
+import React from 'react'
+import text from './titles.json'
+
+export const hello = (
+  <h1 id="title"
+      className="header"
+      style={{backgroundColor: 'green'}}>
+      {text.hello}
+  </h1>
+)
+```
+
+Then into `index.js`
+
+```javascript
+import React from 'react'
+import { render } from 'react-dom'
+import { hello } from './lib'
+
+render(
+  <div>
+    {hello}
+  </div>,
+  document.querySelector('body')
+)
+```
+
+Add `json-loader` in `webpack.config.js`
+
+```javascript
+var webpack = require("webpack"); //best practice to require...ES6 import
+
+module.exports = {
+  entry: "./src/index.js",
+  output: {
+    path: "dist/assets",
+    filename: "bundle.js",
+    publicPath: "assets"
+  },
+  devServer: {
+    inline: true,
+    contentBase: './dist',
+    port: 3000
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,  // look for files that has a .js extension
+        exclude: /(node_modules)/,
+        loader: ["babel-loader"],
+        query: {
+          presets: ["latest", "react", "stage-0"]
+        }
+      },
+      {
+          test: /\.json$/,
+          exclude: /(node_modules)/,
+          loader: "json-loader"
+      }
+    ]
+  }
+}
+```
+
+Install `json-loader`
+
+```bash
+$ npm install json-loader@0.5.4 --save-dev
 ```
