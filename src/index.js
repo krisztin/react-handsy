@@ -1,14 +1,10 @@
-const { render } = ReactDOM;
-
-const style = {
-  backgroundColor: 'red',
-}
+import React from 'react'
+import { render } from 'react-dom'
+import { hello } from './lib'
 
 render(
-  <h1 id='title'
-      className='header'
-      style={style}>
-      Hello World
-  </h1>,
+  <div>
+    {hello}
+  </div>,
   document.querySelector('body')
 )
