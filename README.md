@@ -298,3 +298,32 @@ Install `json-loader`
 ```bash
 $ npm install json-loader@0.5.4 --save-dev
 ```
+
+## CSS to Webpack build
+
+In `webpack.config.js` add
+
+```javascript
+      {
+        test: /\.css$/,
+        loader: "style-loader!css-loader!autoprefixer-loader"
+      },
+      {
+        test: /\.scss$/,
+        loader: "style-loader!css-loader!autoprefixer-loader!sass-loader"
+      }
+```
+
+```
+npm install autoprefixer-loader@3.2.0 --save-dev
+npm install css-loader@0.25.0 --save-dev
+npm install sass-loader@4.0.2 --save-dev
+npm install node-sass@3.10.1 --save-dev //dependency for sass-loader
+npm install style-loader@0.13.1 --save-dev
+```
+
+Import stylesheet
+
+```js
+import './scss/main.scss'
+```
